@@ -222,12 +222,12 @@ class RulesetBuilder
         return $this
             ->handle()
             ->delegate('$', 'expr')
-            ->enforceSize('➀', $this->config['ternary']['before_?'], 'There should be %quantity% space(s) before the "?".')
-            ->enforceSize('➁', $this->config['ternary']['after_?'], 'There should be %quantity% space(s) after the "?".')
-            ->enforceSize('➂', $this->config['ternary']['before_:'], 'There should be %quantity% space(s) before the ":".')
-            ->enforceSize('➃', $this->config['ternary']['after_:'], 'There should be %quantity% space(s) after the ":".')
-            ->enforceSize('➄', $this->config['ternary']['before_?:'], 'There should be %quantity% space(s) before the "?:".')
-            ->enforceSize('➅', $this->config['ternary']['after_?:'], 'There should be %quantity% space(s) after the "?:".')
+            ->enforceSpaceOrLineBreak('➀', $this->config['ternary']['before_?'], 'There should be %quantity% space(s) before the "?".')
+            ->enforceSpaceOrLineBreak('➁', $this->config['ternary']['after_?'], 'There should be %quantity% space(s) after the "?".')
+            ->enforceSpaceOrLineBreak('➂', $this->config['ternary']['before_:'], 'There should be %quantity% space(s) before the ":".')
+            ->enforceSpaceOrLineBreak('➃', $this->config['ternary']['after_:'], 'There should be %quantity% space(s) after the ":".')
+            ->enforceSpaceOrLineBreak('➄', $this->config['ternary']['before_?:'], 'There should be %quantity% space(s) before the "?:".')
+            ->enforceSpaceOrLineBreak('➅', $this->config['ternary']['after_?:'], 'There should be %quantity% space(s) after the "?:".')
         ;
     }
 
@@ -235,17 +235,17 @@ class RulesetBuilder
     {
         return $this
             ->handle()
-            ->enforceSize('➀', $this->config['tag']['before'], 'A tag statement should start with %quantity% space(s).')
-            ->enforceSize('➁', $this->config['tag']['after'], 'A tag statement should end with %quantity% space(s).')
+            ->enforceSpaceOrLineBreak('➀', $this->config['tag']['before'], 'A tag statement should start with %quantity% space(s).')
+            ->enforceSpaceOrLineBreak('➁', $this->config['tag']['after'], 'A tag statement should end with %quantity% space(s).')
         ;
     }
 
     public function argTag(): Handler
     {
         return $this->handle()
-            ->enforceSize(' ', $this->config['tag_default_arg_spacing'], 'Tag arguments should be separated by %quantity% space(s).')
-            ->enforceSize('➀', $this->config['tag']['before'], 'A tag statement should start with %quantity% space(s).')
-            ->enforceSize('➁', $this->config['tag']['after'], 'A tag statement should end with %quantity% space(s).')
+            ->enforceSpaceOrLineBreak(' ', $this->config['tag_default_arg_spacing'], 'Tag arguments should be separated by %quantity% space(s).')
+            ->enforceSpaceOrLineBreak('➀', $this->config['tag']['before'], 'A tag statement should start with %quantity% space(s).')
+            ->enforceSpaceOrLineBreak('➁', $this->config['tag']['after'], 'A tag statement should end with %quantity% space(s).')
         ;
     }
 
@@ -253,16 +253,16 @@ class RulesetBuilder
     {
         return $this->handle()
             ->delegate('$', 'expr')
-            ->enforceSize('➀', $this->config['slice']['after_['], 'There should be %quantity% space(s) right after the opening "[" of a slice.')
-            ->enforceSize('➁', $this->config['slice']['before_:'], 'There should be %quantity% space(s) before the middle ":" of a slice.')
-            ->enforceSize('➂', $this->config['slice']['after_:'], 'There should be %quantity% space(s) after the middle ":" of a slice.')
-            ->enforceSize('➃', $this->config['slice']['before_]'], 'There should be %quantity% space(s) right before the closing "]" of a slice.')
+            ->enforceSpaceOrLineBreak('➀', $this->config['slice']['after_['], 'There should be %quantity% space(s) right after the opening "[" of a slice.')
+            ->enforceSpaceOrLineBreak('➁', $this->config['slice']['before_:'], 'There should be %quantity% space(s) before the middle ":" of a slice.')
+            ->enforceSpaceOrLineBreak('➂', $this->config['slice']['after_:'], 'There should be %quantity% space(s) after the middle ":" of a slice.')
+            ->enforceSpaceOrLineBreak('➃', $this->config['slice']['before_]'], 'There should be %quantity% space(s) right before the closing "]" of a slice.')
         ;
     }
 
     public function build(): array
     {
-        $tags = self::using(self::TAGS_VARS, [
+        $tags = $this->using(self::TAGS_VARS, [
             ['<➀use $ with &➁>', $this->argTag()->delegate('$', 'expr')->delegate('&', 'imports')],
             ['<➀use $➁>', $this->argTag()->delegate('$', 'expr')],
             ['<➀apply $➁>', $this->argTag()->delegate('$', 'expr')],
@@ -288,11 +288,11 @@ class RulesetBuilder
                 ->argTag()
                 ->delegate('$', 'expr')
                 ->delegate('&', 'with')
-                ->enforceSize('➊', $this->config['from']['before_source'], 'There should be %quantity% space(s) before the source.')
-                ->enforceSize('➋', $this->config['from']['before_source'], 'There should be %quantity% space(s) before the "ignore missing".')
-                ->enforceSize('➌', $this->config['from']['before_source'], 'There should be %quantity% space(s) before the "with".')
-                ->enforceSize('➍', $this->config['from']['before_source'], 'There should be %quantity% space(s) after the "with".')
-                ->enforceSize('➎', $this->config['from']['before_source'], 'There should be %quantity% space(s) before the "only".'),
+                ->enforceSpaceOrLineBreak('➊', $this->config['from']['before_source'], 'There should be %quantity% space(s) before the source.')
+                ->enforceSpaceOrLineBreak('➋', $this->config['from']['before_source'], 'There should be %quantity% space(s) before the "ignore missing".')
+                ->enforceSpaceOrLineBreak('➌', $this->config['from']['before_source'], 'There should be %quantity% space(s) before the "with".')
+                ->enforceSpaceOrLineBreak('➍', $this->config['from']['before_source'], 'There should be %quantity% space(s) after the "with".')
+                ->enforceSpaceOrLineBreak('➎', $this->config['from']['before_source'], 'There should be %quantity% space(s) before the "only".'),
             ],
             ['<➀embed➊$➋ignore missing➎only➁>', $this
                 ->argTag()
@@ -320,13 +320,13 @@ class RulesetBuilder
                 ->delegate('$', 'expr')->delegate('&', 'with')
                 ->enforceSize('➊', $this->config['from']['before_source'], 'There should be %quantity% space(s) before the source.')
                 ->enforceSize('➌', $this->config['from']['before_source'], 'There should be %quantity% space(s) before the "with".')
-                ->enforceSize('➍', $this->config['from']['before_source'], 'There should be %quantity% space(s) after the "with".'),
+                ->enforceSpaceOrLineBreak('➍', $this->config['from']['before_source'], 'There should be %quantity% space(s) after the "with".'),
             ],
             ['<➀embed➊$➎only➁>', $this
                 ->argTag()
                 ->delegate('$', 'expr')
                 ->enforceSize('➊', $this->config['from']['before_source'], 'There should be %quantity% space(s) before the source.')
-                ->enforceSize('➎', $this->config['from']['before_source'], 'There should be %quantity% space(s) before the "only".'),
+                ->enforceSpaceOrLineBreak('➎', $this->config['from']['before_source'], 'There should be %quantity% space(s) before the "only".'),
             ],
             ['<➀embed➊$➁>', $this
                 ->argTag()
@@ -390,10 +390,10 @@ class RulesetBuilder
             ['<➀set @➁>', $this->argTag()],
             ['<➀endset➁>', $this->noArgTag()],
             ['<➀macro @_@➁>', $this->handle()
-                ->enforceSize('➀', $this->config['tag']['before'], 'A tag statement should start with %quantity% space(s).')
-                ->enforceSize('➁', $this->config['tag']['after'], 'A tag statement should end with %quantity% space(s).')
-                ->enforceSize(' ', $this->config['macro']['after_macro'], 'There should be %quantity% space(s) between macro keyword and its name.')
-                ->enforceSize('_', $this->config['macro']['after_name'], 'There should be %quantity% space(s) between macro name and args.'),
+                ->enforceSpaceOrLineBreak('➀', $this->config['tag']['before'], 'A tag statement should start with %quantity% space(s).')
+                ->enforceSpaceOrLineBreak('➁', $this->config['tag']['after'], 'A tag statement should end with %quantity% space(s).')
+                ->enforceSpaceOrLineBreak(' ', $this->config['macro']['after_macro'], 'There should be %quantity% space(s) between macro keyword and its name.')
+                ->enforceSpaceOrLineBreak('_', $this->config['macro']['after_name'], 'There should be %quantity% space(s) between macro name and args.'),
             ],
             ['<➀endmacro➁>', $this->noArgTag()],
             ['<➀block @➁>', $this->argTag()],
@@ -433,8 +433,8 @@ class RulesetBuilder
                 ->enforceSize('➋', $this->config['from']['after_source'], 'There should be %quantity% space(s) after the source.')
                 ->enforceSize('➌', $this->config['from']['before_names'], 'There should be %quantity% space(s) before the imported names.'),
             ],
-            ['{➀$➁}', $this->handle()->delegate('$', 'expr')->enforceSize('➀', $this->config['print']['before'], 'A print statement should start with %quantity% space(s).')->enforceSize('➁', $this->config['print']['after'], 'A print statement should end with %quantity% space(s).')],
-            ['<➀if $➁>', $this->handle()->delegate('$', 'expr')->enforceSize(' ', $this->config['if'], 'There should be %quantity% space(s) between the if keyword and its condition.')],
+            ['{➀$➁}', $this->handle()->delegate('$', 'expr')->enforceSpaceOrLineBreak('➀', $this->config['print']['before'], 'A print statement should start with %quantity% space(s).')->enforceSize('➁', $this->config['print']['after'], 'A print statement should end with %quantity% space(s).')],
+            ['<➀if $➁>', $this->handle()->delegate('$', 'expr')->enforceSpaceOrLineBreak(' ', $this->config['if'], 'There should be %quantity% space(s) between the if keyword and its condition.')],
             ['<➀endif➁>', $this->noArgTag()],
             ['<➀endfor➁>', $this->noArgTag()],
 
