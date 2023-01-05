@@ -1,13 +1,15 @@
 <?php
 
 $finder = PhpCsFixer\Finder::create()
-    ->in(__DIR__)
     ->exclude('tests/Fixtures/app/cache')
+    ->ignoreDotFiles(false)
+    ->in(__DIR__)
 ;
 
 $config = new PhpCsFixer\Config();
 
 return $config
+    ->setFinder($finder)
     ->setRiskyAllowed(true)
     ->setRules([
         '@PHPUnit60Migration:risky' => true,
@@ -54,5 +56,4 @@ return $config
         'strict_param' => true,
         'ternary_to_null_coalescing' => true,
     ])
-    ->setFinder($finder)
 ;

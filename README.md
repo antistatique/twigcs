@@ -12,9 +12,21 @@ violations on coding standards.
 
 ## How to install
 
+Run
+
 ```bash
-composer global require friendsoftwig/twigcs
+composer require --dev friendsoftwig/twigcs
 ```
+
+to install `friendsoftwig/twigcs` with [`composer`](https://getcomposer.org).
+
+Run
+
+```bash
+phive install friendsoftwig/twigcs
+```
+
+to install `friendsoftwig/twigcs` with [`phive`](https://phar.io).
 
 ## How to run
 
@@ -124,11 +136,15 @@ Using configuration, you can easily store per-project settings:
 // ~/.twig_cs.dist.php
 <?php
 
-return \FriendsOfTwig\Twigcs\Config\Config::create()
+declare(strict_types=1);
+
+use FriendsOfTwig\Twigcs;
+
+return Twigcs\Config\Config::create()
     ->setName('my-config')
     ->setSeverity('warning')
     ->setReporter('json')
-    ->setRuleSet(FriendsOfTwig\Twigcs\Ruleset\Official::class)
+    ->setRuleSet(Twigcs\Ruleset\Official::class)
     ->setSpecificRuleSets([ // Every file matching the pattern will use a different ruleset.
         '*/template.html.twig' => Acme\Project\CustomRuleset::class,
     ])
@@ -158,10 +174,14 @@ You can also provide finders inside config files, they will completely replace t
 // ~/.twig_cs.dist.php
 <?php
 
-$finderA = FriendsOfTwig\Twigcs\Finder\TemplateFinder::create()->in(__DIR__.'/dirA');
-$finderB = FriendsOfTwig\Twigcs\Finder\TemplateFinder::create()->in(__DIR__.'/dirB');
+declare(strict_types=1);
 
-return \FriendsOfTwig\Twigcs\Config\Config::create()
+use FriendsOfTwig\Twigcs;
+
+$finderA = Twigcs\Finder\TemplateFinder::create()->in(__DIR__.'/dirA');
+$finderB = Twigcs\Finder\TemplateFinder::create()->in(__DIR__.'/dirB');
+
+return Twigcs\Config\Config::create()
     // ...
     ->addFinder($finderA)
     ->addFinder($finderB)
@@ -184,11 +204,13 @@ simplest example when you have only one directory of templates.
 ```php
 <?php
 
-use FriendsOfTwig\Twigcs\TemplateResolver\FileResolver;
+declare(strict_types=1);
 
-return \FriendsOfTwig\Twigcs\Config\Config::create()
+use FriendsOfTwig\Twigcs;
+
+return Twigcs\Config\Config::create()
     // ...
-    ->setTemplateResolver(new FileResolver(__DIR__))
+    ->setTemplateResolver(new Twigcs\TemplateResolver\FileResolver(__DIR__))
     ->setRuleSet(FriendsOfTwig\Twigcs\Ruleset\Official::class)
 ;
 ```
@@ -198,14 +220,16 @@ Here is a more complex example that uses a chain resolver and a namespaced resol
 ```php
 <?php
 
-use FriendsOfTwig\Twigcs\TemplateResolver;
+declare(strict_types=1);
 
-return \FriendsOfTwig\Twigcs\Config\Config::create()
+use FriendsOfTwig\Twigcs;
+
+return Twigcs\Config\Config::create()
     ->setFinder($finder)
-    ->setTemplateResolver(new TemplateResolver\ChainResolver([
-        new TemplateResolver\FileResolver(__DIR__ . '/templates'),
-        new TemplateResolver\NamespacedResolver([
-            'acme' =>  new TemplateResolver\FileResolver(__DIR__ . '/vendor/Acme/AcmeLib/templates')
+    ->setTemplateResolver(new Twigcs\TemplateResolver\ChainResolver([
+        new Twigcs\TemplateResolver\FileResolver(__DIR__ . '/templates'),
+        new Twigcs\TemplateResolver\NamespacedResolver([
+            'acme' =>  new Twigcs\TemplateResolver\FileResolver(__DIR__ . '/vendor/Acme/AcmeLib/templates')
         ]),
     ]))
 ;
@@ -223,7 +247,7 @@ Join us on [Symfony Devs](https://symfony.com/slack) via the **twigcs** channel.
 
 ## Contributing
 
-The master is the development branch, if you find any bug or false positive during style checking, please
+The `main` branch is the development branch. If you find any bug or false positive during style checking, please
 open an issue or submit a pull request.
 
 When creating or changing a class, don't forget to add you as an `@author` at the top of the file.
