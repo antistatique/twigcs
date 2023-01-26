@@ -9,6 +9,7 @@ $finder = PhpCsFixer\Finder::create()
 $config = new PhpCsFixer\Config();
 
 return $config
+    ->setCacheFile(__DIR__.'/.build/php-cs-fixer/php-cs-fixer.cache')
     ->setFinder($finder)
     ->setRiskyAllowed(true)
     ->setRules([
@@ -22,8 +23,40 @@ return $config
         'array_syntax' => [
             'syntax' => 'short',
         ],
+        'blank_line_before_statement' => [
+            'statements' => [
+                'break',
+                'case',
+                'continue',
+                'declare',
+                'default',
+                'do',
+                'exit',
+                'for',
+                'foreach',
+                'goto',
+                'if',
+                'include',
+                'include_once',
+                'phpdoc',
+                'require',
+                'require_once',
+                'return',
+                'switch',
+                'throw',
+                'try',
+                'while',
+                'yield',
+                'yield_from',
+            ],
+        ],
         'braces' => [
             'allow_single_line_closure' => true,
+        ],
+        'method_argument_space' => [
+            'after_heredoc' => false,
+            'keep_multiple_spaces_after_comma' => false,
+            'on_multiline' => 'ensure_fully_multiline',
         ],
         'native_function_invocation' => false,
         'no_extra_blank_lines' => [
@@ -43,6 +76,25 @@ return $config
         'no_useless_else' => true,
         'no_useless_return' => true,
         'non_printable_character' => false,
+        'ordered_class_elements' => [
+            'order' => [
+                'use_trait',
+                'constant_public',
+                'constant_protected',
+                'constant_private',
+                'property_public',
+                'property_protected',
+                'property_private',
+                'construct',
+                'destruct',
+                'magic',
+                'phpunit',
+                'method_public',
+                'method_protected',
+                'method_private',
+            ],
+            'sort_algorithm' => 'none',
+        ],
         'ordered_imports' => [
             'imports_order' => [
                 'class',
@@ -51,7 +103,20 @@ return $config
             ],
             'sort_algorithm' => 'alpha',
         ],
-        'phpdoc_order' => true,
+        'php_unit_internal_class' => true,
+        'php_unit_test_case_static_method_calls' => [
+            'call_type' => 'self',
+        ],
+        'phpdoc_order' => [
+            'order' => [
+                'internal',
+                'covers',
+                'author',
+                'param',
+                'throws',
+                'return',
+            ],
+        ],
         'strict_comparison' => true,
         'strict_param' => true,
         'ternary_to_null_coalescing' => true,

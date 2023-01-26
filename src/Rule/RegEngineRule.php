@@ -8,20 +8,11 @@ use FriendsOfTwig\Twigcs\TwigPort\TokenStream;
 
 class RegEngineRule extends AbstractRule implements RuleInterface
 {
-    /**
-     * @var array
-     */
-    private $ruleset;
+    private array $ruleset;
 
-    /**
-     * @var array
-     */
-    private $unrecognizedExpressions;
+    private array $unrecognizedExpressions;
 
-    /**
-     * @var Linter
-     */
-    private $linter;
+    private Linter $linter;
 
     public function __construct(int $severity, array $ruleset)
     {
@@ -69,6 +60,7 @@ class RegEngineRule extends AbstractRule implements RuleInterface
                 $currentExpression['value'] .= $toAppend;
 
                 $col = 0;
+
                 foreach (str_split($toAppend) as $char) {
                     $currentExpression['map'][] = ['line' => $token->getLine(), 'column' => $token->getColumn() + $col];
                     ++$col;

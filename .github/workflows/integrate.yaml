@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "7.4"
+          - "8.0"
 
     steps:
       - name: "Checkout"
@@ -31,12 +31,12 @@ jobs:
       - name: "Collect code coverage with Xdebug and phpunit/phpunit"
         env:
           XDEBUG_MODE: "coverage"
-        run: "vendor/bin/phpunit --colors=always --coverage-clover=clover.xml"
+        run: "vendor/bin/phpunit --colors=always --coverage-clover=.build/phpunit/logs/clover.xml"
 
       - name: "Send code coverage report to codecov.io"
         uses: "codecov/codecov-action@v3"
         with:
-          files: "clover.xml"
+          files: ".build/phpunit/logs/clover.xml"
 
   coding-standards:
     name: "Coding Standards"
@@ -46,7 +46,7 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "7.4"
+          - "8.0"
 
     steps:
       - name: "Checkout"
@@ -57,6 +57,9 @@ jobs:
         with:
           coverage: "none"
           php-version: "${{ matrix.php-version }}"
+
+      - name: "Create cache directory for friendsofphp/php-cs-fixer"
+        run: "mkdir -p .build/php-cs-fixer"
 
       - name: "Run friendsofphp/php-cs-fixer"
         run: ".phive/php-cs-fixer fix --ansi --diff --dry-run --verbose"
@@ -69,7 +72,7 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "7.4"
+          - "8.0"
 
     steps:
       - name: "Checkout"
@@ -95,7 +98,7 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "7.4"
+          - "8.0"
 
     steps:
       - name: "Checkout"
@@ -127,7 +130,7 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "7.4"
+          - "8.0"
 
     steps:
       - name: "Checkout"
@@ -153,7 +156,6 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "7.4"
           - "8.0"
           - "8.1"
           - "8.2"
@@ -171,5 +173,8 @@ jobs:
       - name: "Install dependencies with composer"
         run: "composer install --ansi --no-progress"
 
-      - name: "Run tests with phpunit/phpunit"
-        run: "vendor/bin/phpunit --colors=always"
+      - name: "Run unit tests with phpunit/phpunit"
+        run: "vendor/bin/phpunit --colors=always --testsuite=unit"
+
+      - name: "Run functional tests with phpunit/phpunit"
+        run: "vendor/bin/phpunit --colors=always --testsuite=functional"

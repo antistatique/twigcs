@@ -16,25 +16,13 @@ function split($str, $len = 1)
 
 class RuleChecker
 {
-    /**
-     * @var array
-     */
-    private $rules;
+    private array $rules;
 
-    /**
-     * @var bool
-     */
-    private $explain;
+    private bool $explain;
 
-    /**
-     * @var array
-     */
-    private $unrecognizedExpressions;
+    private array $unrecognizedExpressions;
 
-    /**
-     * @var array
-     */
-    private $log;
+    private array $log;
 
     public function __construct(array $rulesets)
     {
@@ -60,23 +48,6 @@ class RuleChecker
         return $this->log;
     }
 
-    private function compute(array $vars, string $rule, callable $callback)
-    {
-        $regex = '';
-        $types = [];
-
-        foreach (split($rule) as $char) {
-            if ($vars[$char] ?? false) {
-                $regex .= '('.$vars[$char].')';
-                $types[] = $char;
-            } else {
-                $regex .= $char;
-            }
-        }
-
-        return new Regex($rule, '#^'.$regex.'$#', $types, $callback);
-    }
-
     public function subCheck(Report $report, string $ruleset, Capture $capture)
     {
         $this->check($report, $ruleset, $capture->getText(), $capture->getOffsetsMap(), $capture->getOffset());
@@ -87,6 +58,7 @@ class RuleChecker
         foreach ($this->rules[$ruleset] as $rule) {
             if ($matches = $rule->match($text)) {
                 $grouped = [];
+
                 foreach ($matches as $match) {
                     $match->increaseOffset($offset);
                     $match->setOffsetsMap($offsetsMap);
@@ -144,5 +116,22 @@ class RuleChecker
         $this->log = $log;
 
         return $this;
+    }
+
+    private function compute(array $vars, string $rule, callable $callback)
+    {
+        $regex = '';
+        $types = [];
+
+        foreach (split($rule) as $char) {
+            if ($vars[$char] ?? false) {
+                $regex .= '('.$vars[$char].')';
+                $types[] = $char;
+            } else {
+                $regex .= $char;
+            }
+        }
+
+        return new Regex($rule, '#^'.$regex.'$#', $types, $callback);
     }
 }

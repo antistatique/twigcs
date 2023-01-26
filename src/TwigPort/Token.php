@@ -11,11 +11,6 @@ namespace FriendsOfTwig\Twigcs\TwigPort;
 
 class Token
 {
-    private $value;
-    private $type;
-    private $lineno;
-    private $columnno;
-
     public const EOF_TYPE = -1;
     public const TEXT_TYPE = 0;
     public const BLOCK_START_TYPE = 1;
@@ -33,6 +28,10 @@ class Token
     public const WHITESPACE_TYPE = 13;
     public const NEWLINE_TYPE = 14;
     public const COMMENT_TYPE = 15;
+    private $value;
+    private int $type;
+    private int $lineno;
+    private int $columnno;
 
     public function __construct(int $type, $value, int $lineno, int $columnno)
     {
@@ -86,55 +85,89 @@ class Token
         switch ($type) {
             case self::EOF_TYPE:
                 $name = 'EOF_TYPE';
+
                 break;
+
             case self::TEXT_TYPE:
                 $name = 'TEXT_TYPE';
+
                 break;
+
             case self::BLOCK_START_TYPE:
                 $name = 'BLOCK_START_TYPE';
+
                 break;
+
             case self::VAR_START_TYPE:
                 $name = 'VAR_START_TYPE';
+
                 break;
+
             case self::BLOCK_END_TYPE:
                 $name = 'BLOCK_END_TYPE';
+
                 break;
+
             case self::VAR_END_TYPE:
                 $name = 'VAR_END_TYPE';
+
                 break;
+
             case self::NAME_TYPE:
                 $name = 'NAME_TYPE';
+
                 break;
+
             case self::NUMBER_TYPE:
                 $name = 'NUMBER_TYPE';
+
                 break;
+
             case self::STRING_TYPE:
                 $name = 'STRING_TYPE';
+
                 break;
+
             case self::OPERATOR_TYPE:
                 $name = 'OPERATOR_TYPE';
+
                 break;
+
             case self::PUNCTUATION_TYPE:
                 $name = 'PUNCTUATION_TYPE';
+
                 break;
+
             case self::INTERPOLATION_START_TYPE:
                 $name = 'INTERPOLATION_START_TYPE';
+
                 break;
+
             case self::INTERPOLATION_END_TYPE:
                 $name = 'INTERPOLATION_END_TYPE';
+
                 break;
+
             case self::ARROW_TYPE:
                 $name = 'ARROW_TYPE';
+
                 break;
+
             case self::WHITESPACE_TYPE:
                 $name = 'WHITESPACE_TYPE';
+
                 break;
+
             case self::NEWLINE_TYPE:
                 $name = 'NEWLINE_TYPE';
+
                 break;
+
             case self::COMMENT_TYPE:
                 $name = 'COMMENT_TYPE';
+
                 break;
+
             default:
                 throw new \LogicException(sprintf('Token of type "%s" does not exist.', $type));
         }
@@ -147,38 +180,55 @@ class Token
         switch ($type) {
             case self::EOF_TYPE:
                 return 'end of template';
+
             case self::TEXT_TYPE:
                 return 'text';
+
             case self::BLOCK_START_TYPE:
                 return 'begin of statement block';
+
             case self::VAR_START_TYPE:
                 return 'begin of print statement';
+
             case self::BLOCK_END_TYPE:
                 return 'end of statement block';
+
             case self::VAR_END_TYPE:
                 return 'end of print statement';
+
             case self::NAME_TYPE:
                 return 'name';
+
             case self::NUMBER_TYPE:
                 return 'number';
+
             case self::STRING_TYPE:
                 return 'string';
+
             case self::OPERATOR_TYPE:
                 return 'operator';
+
             case self::PUNCTUATION_TYPE:
                 return 'punctuation';
+
             case self::INTERPOLATION_START_TYPE:
                 return 'begin of string interpolation';
+
             case self::INTERPOLATION_END_TYPE:
                 return 'end of string interpolation';
+
             case self::ARROW_TYPE:
                 return 'arrow function';
+
             case self::WHITESPACE_TYPE:
                 return 'whitespace';
+
             case self::NEWLINE_TYPE:
                 return 'new line';
+
             case self::COMMENT_TYPE:
                 return 'comment';
+
             default:
                 throw new \LogicException(sprintf('Token of type "%s" does not exist.', $type));
         }

@@ -4,15 +4,9 @@ namespace FriendsOfTwig\Twigcs\RegEngine;
 
 class ExpressionNode
 {
-    /**
-     * @var string
-     */
-    private $expr;
+    private string $expr;
 
-    /**
-     * @var array
-     */
-    private $children;
+    private array $children;
 
     /**
      * @var int
@@ -24,18 +18,7 @@ class ExpressionNode
      */
     private $type;
 
-    /**
-     * @var array
-     */
-    private $offsetsMap;
-
-    public static function fromString($expr)
-    {
-        $scoped = new ScopedExpression();
-        $scoped->enqueueString($expr);
-
-        return new self($scoped);
-    }
+    private array $offsetsMap;
 
     public function __construct(ScopedExpression $scoped, $offset = 0)
     {
@@ -52,6 +35,7 @@ class ExpressionNode
                 ++$offsetCounter;
             } else {
                 $kind = $item->getKind();
+
                 for ($i = 0; $i < strlen($kind); ++$i) {
                     $offsets[] = $offsetCounter;
                 }
@@ -68,12 +52,22 @@ class ExpressionNode
         switch ($scoped->getKind()) {
             case '__ARRAY__':
                 $this->type = 'arrayOrSlice';
+
                 break;
+
             case '__PARENTHESES__':
             case '__HASH__':
             default:
                 $this->type = 'expr';
         }
+    }
+
+    public static function fromString($expr)
+    {
+        $scoped = new ScopedExpression();
+        $scoped->enqueueString($expr);
+
+        return new self($scoped);
     }
 
     public function getOffsetAt($i)

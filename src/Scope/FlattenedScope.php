@@ -4,20 +4,11 @@ namespace FriendsOfTwig\Twigcs\Scope;
 
 class FlattenedScope
 {
-    /**
-     * @var array
-     */
-    private $isolatedScopes;
+    private array $isolatedScopes;
 
-    /**
-     * @var array
-     */
-    private $queue;
+    private array $queue;
 
-    /**
-     * @var array
-     */
-    private $blocks;
+    private array $blocks;
 
     public function __construct(Scope $scope, array $blocks = [])
     {
@@ -52,6 +43,7 @@ class FlattenedScope
         foreach ($queue as $item) {
             if ($item instanceof BlockReference) {
                 $block = $this->blocks[$item->getName()] ?? null;
+
                 if ($block) {
                     $this->queue = array_merge($this->queue, $block->flatten()->getQueue());
                 }

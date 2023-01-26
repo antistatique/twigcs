@@ -1,8 +1,13 @@
 .PHONY: it
 it: coding-standards static-code-analysis tests ## Runs the coding-standards, static-code-analysis, and tests targets
 
+.PHONY: code-coverage
+code-coverage: vendor ## Collects coverage from running tests with phpunit/phpunit
+	vendor/bin/phpunit --coverage-text
+
 .PHONY: coding-standards
 coding-standards: vendor ## Fixes code style issues with friendsofphp/php-cs-fixer
+	mkdir -p .build/php-cs-fixer
 	.phive/php-cs-fixer fix --diff --verbose
 
 .PHONY: dependency-analysis
@@ -32,8 +37,9 @@ static-code-analysis-baseline: vendor ## Generates a baseline for static code an
 	.phive/psalm --config=psalm.xml --set-baseline=psalm-baseline.xml
 
 .PHONY: tests
-tests: vendor ## Runs tests with phpunit/phpunit
-	vendor/bin/phpunit
+tests: vendor ## Runs unit and functional tests with phpunit/phpunit
+	vendor/bin/phpunit --testsuite=unit
+	vendor/bin/phpunit --testsuite=functional
 
 vendor: composer.json
 	composer install --no-progress

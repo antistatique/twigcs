@@ -21,6 +21,12 @@ class ScopeBuilder
     private int $maxDepth = 5;
     private TemplateResolverInterface $loader;
 
+    public function __construct(TemplateResolverInterface $loader, int $mode = 0)
+    {
+        $this->mode = $mode;
+        $this->loader = $loader;
+    }
+
     public static function createVariableScopeBuilder(TemplateResolverInterface $loader)
     {
         return new self($loader, self::MODE_VARIABLE);
@@ -31,10 +37,9 @@ class ScopeBuilder
         return new self($loader, self::MODE_MACRO);
     }
 
-    public function __construct(TemplateResolverInterface $loader, int $mode = 0)
+    public function build(TokenStream $tokens)
     {
-        $this->mode = $mode;
-        $this->loader = $loader;
+        return $this->doBuild($tokens);
     }
 
     private function subScope(string $twigPath, int $depth): Scope
@@ -57,11 +62,6 @@ class ScopeBuilder
         }
     }
 
-    public function build(TokenStream $tokens)
-    {
-        return $this->doBuild($tokens);
-    }
-
     private function doBuild(TokenStream $tokens, $name = 'root', $depth = 0): Scope
     {
         $scope = new Scope('file', $name);
@@ -79,6 +79,7 @@ class ScopeBuilder
                     } else {
                         $scope = $scope->spawn($blockType, 'noname');
                     }
+
                     if ('macro' === $blockType) {
                         $scope->isolate();
                     }
@@ -106,7 +107,9 @@ class ScopeBuilder
                         StreamNavigator::skipToOneOf($tokens, [
                             ['type' => Token::BLOCK_END_TYPE],
                         ]);
+
                         break;
+
                     case 'embed':
                     case 'include':
                         $templateName = $tokens->look(4);
@@ -122,7 +125,9 @@ class ScopeBuilder
                             ['value' => 'with'],
                             ['type' => Token::BLOCK_END_TYPE],
                         ]);
+
                         break;
+
                     case 'from':
                         $from = $tokens->look(4);
 
@@ -143,6 +148,7 @@ class ScopeBuilder
                         // Handles single or multiple imports ( {% from "file.twig" import foo as bar, baz %} )
                         while (in_array($tokens->getCurrent()->getType(), [Token::NAME_TYPE, Token::PUNCTUATION_TYPE, Token::WHITESPACE_TYPE], true)) {
                             $next = $tokens->getCurrent();
+
                             if (Token::NAME_TYPE === $next->getType() && $this->handleMacros()) {
                                 $scope->declare($next->getValue(), $next);
                             }
@@ -150,7 +156,9 @@ class ScopeBuilder
                         }
 
                         StreamNavigator::skipTo($tokens, Token::BLOCK_END_TYPE);
+
                         break;
+
                     case 'import':
                         StreamNavigator::skipTo($tokens, Token::NAME_TYPE, 'as');
                         StreamNavigator::skip($tokens, 2);
@@ -158,12 +166,15 @@ class ScopeBuilder
                         // Handles single or multiple imports ( {% import foo as bar, baz %} )
                         while (in_array($tokens->getCurrent()->getType(), [Token::NAME_TYPE, Token::PUNCTUATION_TYPE, Token::WHITESPACE_TYPE], true)) {
                             $next = $tokens->getCurrent();
+
                             if (Token::NAME_TYPE === $next->getType() && $this->handleMacros()) {
                                 $scope->declare($next->getValue(), $next);
                             }
                             $tokens->next();
                         }
+
                         break;
+
                     case 'set':
                         if ($this->handleVariables()) {
                             $scope->declare($tokens->look(4)->getValue(), $tokens->look(4));
@@ -172,17 +183,23 @@ class ScopeBuilder
                             ['type' => Token::OPERATOR_TYPE, 'value' => '='],
                             ['type' => Token::BLOCK_END_TYPE],
                         ]);
+
                         break;
+
                     case 'if':
                     case 'elseif':
                         StreamNavigator::skip($tokens, 3);
+
                         break;
+
                     case 'for':
                         if ($this->handleVariables()) {
                             $scope->declare($tokens->look(4)->getValue(), $tokens->look(4));
                         }
                         StreamNavigator::skip($tokens, 5);
+
                         break;
+
                     default:
                         StreamNavigator::skipTo($tokens, Token::BLOCK_END_TYPE);
                 }

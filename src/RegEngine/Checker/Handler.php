@@ -9,19 +9,27 @@ class Handler
      */
     private $callback;
 
-    /**
-     * @var Handler
-     */
-    private $parent;
-
-    public static function create(): self
-    {
-        return new self();
-    }
+    private ?Handler $parent;
 
     public function __construct(self $parent = null)
     {
         $this->parent = $parent;
+    }
+
+    public function __invoke(RuleChecker $ruleChecker, Report $report, array $captures)
+    {
+        $errors = call_user_func($this->callback, $ruleChecker, $report, $captures);
+
+        if (!$this->parent) {
+            return;
+        }
+
+        call_user_func($this->parent, $ruleChecker, $report, $captures);
+    }
+
+    public static function create(): self
+    {
+        return new self();
     }
 
     public function noop(): self
@@ -67,17 +75,6 @@ class Handler
                 $ruleChecker->subCheck($report, $ruleset, $subExpr);
             }
         });
-    }
-
-    public function __invoke(RuleChecker $ruleChecker, Report $report, array $captures)
-    {
-        $errors = call_user_func($this->callback, $ruleChecker, $report, $captures);
-
-        if (!$this->parent) {
-            return;
-        }
-
-        call_user_func($this->parent, $ruleChecker, $report, $captures);
     }
 
     public function attach(callable $callback): self

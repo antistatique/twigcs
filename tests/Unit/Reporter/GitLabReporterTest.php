@@ -2,16 +2,29 @@
 
 declare(strict_types=1);
 
-namespace FriendsOfTwig\Twigcs\Tests\Reporter;
+namespace FriendsOfTwig\Twigcs\Tests\Unit\Reporter;
 
 use FriendsOfTwig\Twigcs\Reporter\GitLabReporter;
 use FriendsOfTwig\Twigcs\Validator\Violation;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console;
 
+/**
+ * @internal
+ *
+ * @covers \FriendsOfTwig\Twigcs\Reporter\GitLabReporter
+ */
 final class GitLabReporterTest extends TestCase
 {
-    public const EXPECTED_REPORT = <<<EOF
+    public function testReport(): void
+    {
+        $output = $this->createMock(Console\Output\OutputInterface::class);
+
+        $output
+            ->expects(self::once())
+            ->method('writeln')
+            ->with(
+                <<<EOF
 [
     {
         "description": "You are not allowed to do that.",
@@ -47,31 +60,34 @@ final class GitLabReporterTest extends TestCase
         }
     }
 ]
-EOF;
+EOF
+            );
 
-    public function testReport(): void
-    {
         $reporter = new GitLabReporter();
-        $output = $this->createMock(ConsoleOutput::class);
 
-        $output
-            ->expects($this->once())
-            ->method('writeln')
-            ->with(self::EXPECTED_REPORT);
-
-        $reporter->report($output, [
-            new Violation('template.twig', 10, 20, 'You are not allowed to do that.'),
-            new Violation('template.twig', 10, 20, 'You should not do that.', Violation::SEVERITY_WARNING),
-            new Violation('template.twig', 10, 20, 'You might not want to do that.', Violation::SEVERITY_INFO),
-        ]);
+        $reporter->report(
+            $output,
+            [
+                new Violation('template.twig', 10, 20, 'You are not allowed to do that.'),
+                new Violation('template.twig', 10, 20, 'You should not do that.', Violation::SEVERITY_WARNING),
+                new Violation('template.twig', 10, 20, 'You might not want to do that.', Violation::SEVERITY_INFO),
+            ]
+        );
     }
 
     public function testReportWithJsonException(): void
     {
+        $output = $this->createMock(Console\Output\OutputInterface::class);
+
         $reporter = new GitLabReporter();
-        $output = $this->createMock(ConsoleOutput::class);
 
         $this->expectException(\JsonException::class);
-        $reporter->report($output, [new Violation('template.twig', 10, 20, "Error message with latin1 character \xE7")]);
+
+        $reporter->report(
+            $output,
+            [
+                new Violation('template.twig', 10, 20, "Error message with latin1 character \xE7"),
+            ]
+        );
     }
 }

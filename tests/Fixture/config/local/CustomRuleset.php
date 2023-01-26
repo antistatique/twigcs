@@ -1,6 +1,6 @@
 <?php
 
-namespace FriendsOfTwig\Twigcs\Tests\data\config\local;
+namespace FriendsOfTwig\Twigcs\Tests\Fixture\config\local;
 
 use FriendsOfTwig\Twigcs\RegEngine\RulesetBuilder;
 use FriendsOfTwig\Twigcs\RegEngine\RulesetConfigurator;
@@ -8,19 +8,16 @@ use FriendsOfTwig\Twigcs\Rule\UnusedVariable;
 use FriendsOfTwig\Twigcs\Ruleset\RulesetInterface;
 use FriendsOfTwig\Twigcs\Validator\Violation;
 
-class CustomRuleset implements RulesetInterface
+final class CustomRuleset implements RulesetInterface
 {
-    private $twigMajorVersion;
+    private int $twigMajorVersion;
 
     public function __construct(int $twigMajorVersion)
     {
         $this->twigMajorVersion = $twigMajorVersion;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRules()
+    public function getRules(): array
     {
         $configurator = new RulesetConfigurator();
         $configurator->setTwigMajorVersion($this->twigMajorVersion);
